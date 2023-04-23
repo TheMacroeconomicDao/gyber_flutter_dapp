@@ -1,22 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:metamask_auth_00/widgets/web3_home_widget.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'controllers/web3controller.dart';
+import 'pages/fixed_swap/home.dart';
+import 'routes.dart';
+import 'utils.dart';
+
+void main() async {
+  setPathUrlStrategy();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: urlPrefixWithoutHttp,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
+        primaryColor: kBlack,
+        textTheme:
+            GoogleFonts.mPlusRounded1cTextTheme(Theme.of(context).textTheme),
+        scaffoldBackgroundColor: kScaffold,
       ),
-      home: const Web3Home(),
+      initialBinding: BindingsBuilder(() {
+        final web3 = Get.put<Web3Controller>(Web3Controller(), permanent: true);
+        web3.connectToLocalProvider();
+      }),
+      getPages: Routes.pages,
+      initialRoute: Routes.initialRoute,
+      unknownRoute: Routes.unknownPage,
+      defaultTransition: Transition.fadeIn,
+      transitionDuration: 150.milliseconds,
     );
   }
 }
